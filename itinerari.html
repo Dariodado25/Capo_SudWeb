@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Itinerari — Capo Sud</title>
+  <meta name="description" content="Itinerari per il Sudafrica pianificati e testati sul campo. Non copiati da un catalogo." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F1E9D8'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-style='italic' font-weight='700' font-size='20' fill='%23C46A3F' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E" />
+  <meta property="og:title" content="Itinerari — Capo Sud" />
+  <meta property="og:description" content="Itinerari per il Sudafrica pianificati e testati sul campo. Non copiati da un catalogo." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="it_IT" />
+  <link rel="stylesheet" href="css/vintage-bridge.css" />
+  <link rel="stylesheet" href="css/shared-features.css" />
+  <style>
+    .page-hero {
+      position: relative;
+      min-height: 56vh;
+      color: var(--white);
+      display: flex;
+      align-items: flex-end;
+      padding: 140px 0 60px;
+      overflow: hidden;
+    }
+    .page-hero-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1580060839134-75a5edca2e99?auto=format&fit=crop&w=2400&q=80');
+      background-size: cover;
+      background-position: center 60%;
+    }
+    .page-hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(26,26,46,0.35) 0%, rgba(26,26,46,0.85) 100%); }
+    .page-hero-inner { position: relative; width: 100%; max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); }
+    .crumbs { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.75); margin-bottom: 22px; }
+    .crumbs a { color: rgba(255,255,255,0.6); }
+    .crumbs span { margin: 0 8px; opacity: 0.5; }
+    .page-hero h1 { font-size: clamp(48px, 7vw, 88px); margin-bottom: 16px; font-weight: 500; max-width: 900px; }
+    .page-hero h1 em { font-style: italic; color: var(--ocra); }
+    .page-hero p { font-size: clamp(16px, 1.4vw, 19px); max-width: 600px; color: rgba(255,255,255,0.85); margin: 0; }
+
+    /* Filter bar */
+    .filterbar {
+      background: var(--sand);
+      padding: 28px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .filterbar-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 16px;
+      align-items: end;
+    }
+    .filter-group { display: flex; flex-direction: column; gap: 8px; }
+    .filter-group label {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      font-weight: 600;
+    }
+    .filter-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .fc {
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .fc:hover { border-color: var(--ink); }
+    .fc.is-active { background: var(--night); color: var(--white); border-color: var(--night); }
+    .filter-count {
+      font-size: 13px;
+      color: var(--ink-soft);
+      font-weight: 500;
+      white-space: nowrap;
+      padding-bottom: 8px;
+    }
+    .filter-count strong { color: var(--ink); font-family: var(--accent); font-size: 22px; }
+    @media (max-width: 860px) { .filterbar-row { grid-template-columns: 1fr; gap: 14px; } }
+
+    /* Itinerary cards */
+    .itin-section { padding: 64px 0 100px; }
+    .itin-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+    }
+    @media (max-width: 860px) { .itin-grid { grid-template-columns: 1fr; gap: 28px; } }
+
+    .itin-card {
+      display: grid;
+      grid-template-rows: 280px 1fr;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .itin-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px -20px rgba(26,26,46,0.2);
+      border-color: var(--ocra);
+    }
+    .itin-img { position: relative; overflow: hidden; background: var(--sand); }
+    .itin-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s;
+    }
+    .itin-card:hover .itin-img img { transform: scale(1.06); }
+    .itin-badge {
+      position: absolute;
+      top: 16px; left: 16px;
+      z-index: 2;
+    }
+    .itin-favorite {
+      position: absolute;
+      top: 16px; right: 16px;
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.92);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      backdrop-filter: blur(6px);
+    }
+    .itin-body { padding: 24px 28px 28px; display: flex; flex-direction: column; }
+    .itin-meta {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .itin-meta strong { color: var(--ink); font-family: var(--accent); font-size: 18px; font-weight: 400; letter-spacing: 0.04em; }
+    .itin-card h3 {
+      font-size: 26px;
+      margin-bottom: 14px;
+      line-height: 1.15;
+    }
+    .itin-stops {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .itin-stops li {
+      display: flex;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--ink-soft);
+      align-items: center;
+    }
+    .itin-stops .pin {
+      width: 18px; height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ocra);
+      flex-shrink: 0;
+    }
+    .itin-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      margin-top: auto;
+    }
+    .itin-price {
+      display: flex;
+      flex-direction: column;
+    }
+    .itin-price-from {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .itin-price-val {
+      font-family: var(--accent);
+      font-size: 30px;
+      color: var(--ink);
+      line-height: 1;
+    }
+    .itin-cta {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ocra);
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .feat-dots { display: inline-flex; gap: 3px; align-items: center; }
+    .feat-dots span {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--line);
+    }
+    .feat-dots span.on { background: var(--ocra); }
+
+    /* Custom builder bottom CTA */
+    .builder {
+      background: var(--night);
+      color: var(--white);
+      padding: clamp(60px, 8vw, 100px) 0;
+    }
+    .builder-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .builder h2 {
+      font-size: clamp(34px, 4.4vw, 48px);
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+    .builder p {
+      font-size: 17px;
+      color: rgba(255,255,255,0.7);
+      max-width: 520px;
+      margin-bottom: 28px;
+    }
+    .builder-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+    .builder-side {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--line-dk);
+      padding: 28px;
+      border-radius: var(--radius);
+    }
+    .builder-side ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; }
+    .builder-side li {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      font-size: 15px;
+      color: rgba(255,255,255,0.85);
+    }
+    .builder-side li::before {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--capo);
+    }
+    @media (max-width: 860px) { .builder-grid { grid-template-columns: 1fr; gap: 36px; } }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html"><img src="uploads/logo-caposud.png" alt="Capo Sud" class="nav-logo-img" /><small>Blog</small></a>
+      <ul class="nav-links">
+        <li><a class="nav-link" href="index.html">Home</a></li>
+        <li><a class="nav-link" href="blog.html">Blog</a></li>
+        <li><a class="nav-link is-active" href="itinerari.html">Itinerari</a></li>
+        <li><a class="nav-link" href="servizi.html">Servizi</a></li>
+        <li><a class="nav-link" href="chi-sono.html">Chi sono</a></li>
+      </ul>
+      <a class="nav-cta" href="servizi.html">Pianifica con me <span>→</span></a>
+      <button class="nav-burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" id="closeMenu">✕</button>
+    <a class="nav-logo" href="index.html"><img src="uploads/logo-caposud.png" alt="Capo Sud" class="nav-logo-img" /></a>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="itinerari.html">Itinerari</a></li>
+      <li><a href="servizi.html">Servizi</a></li>
+      <li><a href="chi-sono.html">Chi sono</a></li>
+      <li><a href="contatti.html">Contatti</a></li>
+    </ul>
+  </div>
+
+  <!-- HERO -->
+  <header class="page-hero" data-screen-label="Itinerari / Hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-overlay"></div>
+    <div class="page-hero-inner">
+      <div class="crumbs"><a href="index.html">Home</a> <span>/</span> Itinerari</div>
+      <h1>Itinerari <em>per il Sudafrica.</em></h1>
+      <p>Pianificati e testati sul campo — non copiati da un catalogo. Da città a safari, da 7 giorni in su.</p>
+    </div>
+  </header>
+
+  <!-- FILTERS -->
+  <div class="filterbar">
+    <div class="container">
+      <div class="filterbar-row">
+        <div class="filter-group">
+          <label>Durata</label>
+          <div class="filter-chips" data-group="duration">
+            <button class="fc is-active" data-v="all">Tutto</button>
+            <button class="fc" data-v="7">7 giorni</button>
+            <button class="fc" data-v="10">10 giorni</button>
+            <button class="fc" data-v="14">14+</button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <label>Tipo</label>
+          <div class="filter-chips" data-group="type">
+            <button class="fc is-active" data-v="all">Tutto</button>
+            <button class="fc" data-v="city">City</button>
+            <button class="fc" data-v="safari">Safari</button>
+            <button class="fc" data-v="coast">Coast</button>
+            <button class="fc" data-v="mix">Mix</button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <label>Budget</label>
+          <div class="filter-chips" data-group="budget">
+            <button class="fc is-active" data-v="all">Tutto</button>
+            <button class="fc" data-v="low">Low</button>
+            <button class="fc" data-v="mid">Mid</button>
+            <button class="fc" data-v="premium">Premium</button>
+          </div>
+        </div>
+        <div class="filter-count"><strong id="count">6</strong> itinerari</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <main class="itin-section" data-screen-label="Itinerari / Lista">
+    <div class="container">
+      <div class="itin-grid" id="itinList">
+
+        <!-- 1 -->
+        <a class="itin-card" href="#" data-duration="10" data-type="mix" data-budget="mid">
+          <div class="itin-img">
+            <span class="tag tag-ocra itin-badge">Più letto</span>
+            <span class="itin-favorite"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A1A2E" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></span>
+            <img src="https://images.unsplash.com/photo-1580060839134-75a5edca2e99?auto=format&fit=crop&w=900&q=80" alt="Lion's Head e Table Mountain, Cape Town" loading="lazy">
+          </div>
+          <div class="itin-body">
+            <div class="itin-meta">
+              <div><strong>10</strong> giorni</div>
+              <div><strong>Mid</strong></div>
+              <div>Livello <span class="feat-dots"><span class="on"></span><span class="on"></span><span></span></span></div>
+            </div>
+            <h3>Cape Town + Garden Route</h3>
+            <ul class="itin-stops">
+              <li><span class="pin">📍</span> Cape Town · 4 notti</li>
+              <li><span class="pin">📍</span> Hermanus · 1 notte</li>
+              <li><span class="pin">📍</span> Knysna · 2 notti</li>
+              <li><span class="pin">📍</span> Tsitsikamma · 2 notti</li>
+            </ul>
+            <div class="itin-foot">
+              <div class="itin-price">
+                <span class="itin-price-from">a partire da</span>
+                <span class="itin-price-val">€1.450</span>
+              </div>
+              <span class="itin-cta">Vedi itinerario →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 2 -->
+        <a class="itin-card" href="#" data-duration="14" data-type="safari" data-budget="premium">
+          <div class="itin-img">
+            <span class="tag tag-night itin-badge">Avanzato</span>
+            <span class="itin-favorite"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A1A2E" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></span>
+            <img src="https://images.unsplash.com/photo-1523805009345-7448845a9e53?auto=format&fit=crop&w=900&q=80" alt="Elefante africano al Kruger National Park" loading="lazy" />
+          </div>
+          <div class="itin-body">
+            <div class="itin-meta">
+              <div><strong>14</strong> giorni</div>
+              <div><strong>Premium</strong></div>
+              <div>Livello <span class="feat-dots"><span class="on"></span><span class="on"></span><span class="on"></span></span></div>
+            </div>
+            <h3>Grande Safari Sudafricano</h3>
+            <ul class="itin-stops">
+              <li><span class="pin">📍</span> Johannesburg · 1 notte</li>
+              <li><span class="pin">📍</span> Kruger NP · 5 notti</li>
+              <li><span class="pin">📍</span> Eswatini · 2 notti</li>
+              <li><span class="pin">📍</span> St Lucia · 3 notti</li>
+            </ul>
+            <div class="itin-foot">
+              <div class="itin-price">
+                <span class="itin-price-from">a partire da</span>
+                <span class="itin-price-val">€2.200</span>
+              </div>
+              <span class="itin-cta">Vedi itinerario →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 3 -->
+        <a class="itin-card" href="#" data-duration="7" data-type="city" data-budget="low">
+          <div class="itin-img">
+            <span class="tag tag-capo itin-badge">Nuovo</span>
+            <span class="itin-favorite"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A1A2E" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></span>
+            <img src="uploads/pasted-1780309331061-0.png" style="object-position: center 75%" alt="Pinguini africani a Boulders Beach" loading="lazy" />
+          </div>
+          <div class="itin-body">
+            <div class="itin-meta">
+              <div><strong>7</strong> giorni</div>
+              <div><strong>Low</strong></div>
+              <div>Livello <span class="feat-dots"><span class="on"></span><span></span><span></span></span></div>
+            </div>
+            <h3>Cape Town Essenziale</h3>
+            <ul class="itin-stops">
+              <li><span class="pin">📍</span> City Bowl · 3 notti</li>
+              <li><span class="pin">📍</span> Bo-Kaap walk</li>
+              <li><span class="pin">📍</span> Cape Peninsula day-trip</li>
+              <li><span class="pin">📍</span> Stellenbosch · 1 notte</li>
+            </ul>
+            <div class="itin-foot">
+              <div class="itin-price">
+                <span class="itin-price-from">a partire da</span>
+                <span class="itin-price-val">€850</span>
+              </div>
+              <span class="itin-cta">Vedi itinerario →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 4 -->
+        <a class="itin-card" href="#" data-duration="10" data-type="coast" data-budget="mid">
+          <div class="itin-img">
+            <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=900&q=80" alt="In viaggio nella savana al tramonto" loading="lazy" />
+          </div>
+          <div class="itin-body">
+            <div class="itin-meta">
+              <div><strong>10</strong> giorni</div>
+              <div><strong>Mid</strong></div>
+              <div>Livello <span class="feat-dots"><span class="on"></span><span class="on"></span><span></span></span></div>
+            </div>
+            <h3>Wild Coast & Drakensberg</h3>
+            <ul class="itin-stops">
+              <li><span class="pin">📍</span> Durban · 2 notti</li>
+              <li><span class="pin">📍</span> Coffee Bay · 3 notti</li>
+              <li><span class="pin">📍</span> Underberg · 2 notti</li>
+              <li><span class="pin">📍</span> Sani Pass trek</li>
+            </ul>
+            <div class="itin-foot">
+              <div class="itin-price">
+                <span class="itin-price-from">a partire da</span>
+                <span class="itin-price-val">€1.600</span>
+              </div>
+              <span class="itin-cta">Vedi itinerario →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 5 -->
+        <a class="itin-card" href="#" data-duration="14" data-type="mix" data-budget="premium">
+          <div class="itin-img">
+            <span class="tag tag-ocra itin-badge">Honeymoon</span>
+            <img src="https://images.unsplash.com/photo-1523805009345-7448845a9e53?auto=format&fit=crop&w=900&q=80" alt="Giraffa al tramonto nella savana" loading="lazy" />
+          </div>
+          <div class="itin-body">
+            <div class="itin-meta">
+              <div><strong>14</strong> giorni</div>
+              <div><strong>Premium</strong></div>
+              <div>Livello <span class="feat-dots"><span class="on"></span><span class="on"></span><span></span></span></div>
+            </div>
+            <h3>Grand Tour del Sudafrica</h3>
+            <ul class="itin-stops">
+              <li><span class="pin">📍</span> Cape Town · 4 notti</li>
+              <li><span class="pin">📍</span> Winelands · 2 notti</li>
+              <li><span class="pin">📍</span> Garden Route · 5 notti</li>
+              <li><span class="pin">📍</span> Sabi Sand safari · 3 notti</li>
+            </ul>
+            <div class="itin-foot">
+              <div class="itin-price">
+                <span class="itin-price-from">a partire da</span>
+                <span class="itin-price-val">€3.400</span>
+              </div>
+              <span class="itin-cta">Vedi itinerario →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 6 -->
+        <a class="itin-card" href="#" data-duration="7" data-type="safari" data-budget="mid">
+          <div class="itin-img">
+            <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=900&q=80" alt="Savana sudafricana al tramonto" loading="lazy" />
+          </div>
+          <div class="itin-body">
+            <div class="itin-meta">
+              <div><strong>7</strong> giorni</div>
+              <div><strong>Mid</strong></div>
+              <div>Livello <span class="feat-dots"><span class="on"></span><span class="on"></span><span></span></span></div>
+            </div>
+            <h3>Safari Lampo al Kruger</h3>
+            <ul class="itin-stops">
+              <li><span class="pin">📍</span> Hoedspruit · 1 notte</li>
+              <li><span class="pin">📍</span> Kruger Sud · 4 notti</li>
+              <li><span class="pin">📍</span> Blyde River Canyon</li>
+              <li><span class="pin">📍</span> Johannesburg · 1 notte</li>
+            </ul>
+            <div class="itin-foot">
+              <div class="itin-price">
+                <span class="itin-price-from">a partire da</span>
+                <span class="itin-price-val">€1.250</span>
+              </div>
+              <span class="itin-cta">Vedi itinerario →</span>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- BUILDER CTA -->
+  <section class="builder" data-screen-label="Itinerari / Custom builder">
+    <div class="container">
+      <div class="builder-grid">
+        <div>
+          <span class="eyebrow" style="color: var(--ocra);">Itinerario su misura</span>
+          <h2>Nessuno di questi è il tuo viaggio?<br />Te lo costruisco io.</h2>
+          <p>Ogni itinerario nasce da una storia. La tua ha tempi, budget, gusti e compagni diversi. Da €49 ti faccio un piano giorno per giorno — fatto su di te, non su una checklist.</p>
+          <div class="builder-ctas">
+            <a class="btn btn-primary" href="servizi.html">Richiedi su misura →</a>
+            <a class="btn btn-outline-light" href="contatti.html">Parla con me</a>
+          </div>
+        </div>
+        <div class="builder-side">
+          <h4 style="font-family: var(--body); font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin: 0 0 18px;">Cosa ricevi</h4>
+          <ul>
+            <li>Day-by-day stampabile in PDF</li>
+            <li>Alloggi testati per fascia di budget</li>
+            <li>Spostamenti e logistica</li>
+            <li>Lista di posti che evito</li>
+            <li>Follow-up via messaggio per 30 giorni</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo"><img src="uploads/logo-caposud.png" alt="Capo Sud" class="nav-logo-img" /></div>
+          <p>Il Sudafrica spiegato da chi ci vive. Storie e itinerari da Dario, romano in Sudafrica.</p>
+          <!-- TODO: sostituire i link social "#" con i profili reali (Instagram, TikTok, Facebook, Telegram) -->
+          <div class="footer-socials">
+            <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="18" cy="6" r="0.8" fill="currentColor"/></svg></a>
+            <a href="#" aria-label="TikTok"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82a4.83 4.83 0 01-3.77-4.25h-3.21v14.13a2.84 2.84 0 11-2-2.72v-3.3a6.1 6.1 0 105.2 6.04V9.25a8.16 8.16 0 003.78.93V7a4.85 4.85 0 010-1.18z"/></svg></a>
+            <a href="#" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 10-11.6 9.87V14.9H7.9V12h2.5V9.8c0-2.47 1.47-3.84 3.72-3.84 1.08 0 2.2.2 2.2.2v2.4H15.1c-1.22 0-1.6.76-1.6 1.54V12h2.72l-.44 2.9h-2.28v6.97A10 10 0 0022 12z"/></svg></a>
+            <a href="#" aria-label="Telegram"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21.5 4.5L2.5 12l4.5 1.5 1.5 5 3-3 5 4 5-15z"/></svg></a>
+          </div>
+        </div>
+        <div><h5>Esplora</h5><ul><li><a href="index.html">Home</a></li><li><a href="blog.html">Blog</a></li><li><a href="itinerari.html">Itinerari</a></li><li><a href="servizi.html">Servizi</a></li></ul></div>
+        <div><h5>Lavora con me</h5><ul><li><a href="chi-sono.html">Chi sono</a></li><li><a href="servizi.html">Consulenza</a></li><li><a href="contatti.html">Contatti</a></li><li><a href="#">Newsletter</a></li></ul></div>
+        <div>
+          <h5>Sawubona Bot</h5>
+          <p style="color:rgba(255,255,255,0.7); font-size:14px; line-height: 1.5; margin: 0 0 12px;">Risposte 24/7 su Telegram.</p>
+          <!-- TODO: confermare username reale del bot Telegram --><a class="btn btn-primary" href="https://t.me/CapoSudBot" style="padding:10px 16px; min-height:auto;">Apri Sawubona →</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>Fatto con ☀️ da Dario — da qualche parte in Sudafrica</span>
+        <span>© 2026 Capo Sud</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="tg-sticky"><div class="tg-sticky-text"><strong>💬 Parla con Sawubona</strong><span>Domande veloci? Risposta in 30s.</span></div><a href="https://t.me/CapoSudBot">Apri</a></div>
+
+  <script>
+    // Mobile menu: gestito da js/shared.js
+
+    // Filters
+    const state = { duration: 'all', type: 'all', budget: 'all' };
+    document.querySelectorAll('.filter-chips').forEach(group => {
+      const g = group.dataset.group;
+      group.querySelectorAll('.fc').forEach(btn => {
+        btn.addEventListener('click', () => {
+          group.querySelectorAll('.fc').forEach(b => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          state[g] = btn.dataset.v;
+          apply();
+        });
+      });
+    });
+    function apply() {
+      let n = 0;
+      document.querySelectorAll('.itin-card').forEach(card => {
+        const ok =
+          (state.duration === 'all' || card.dataset.duration === state.duration) &&
+          (state.type === 'all' || card.dataset.type === state.type) &&
+          (state.budget === 'all' || card.dataset.budget === state.budget);
+        card.style.display = ok ? '' : 'none';
+        if (ok) n++;
+      });
+      document.getElementById('count').textContent = n;
+    }
+  </script>
+  <script src="js/shared.js" defer></script>
+</body>
+</html>

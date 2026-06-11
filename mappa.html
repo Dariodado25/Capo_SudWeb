@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>La Mappa del Viaggio — Capo Sud</title>
+  <meta name="description" content="Tutti i posti dove Dario è stato davvero in Sudafrica, su una mappa interattiva: storie, foto e itinerari tappa per tappa." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F1E9D8'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-style='italic' font-weight='700' font-size='20' fill='%23C46A3F' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E" />
+  <meta property="og:title" content="La Mappa del Viaggio — Capo Sud" />
+  <meta property="og:description" content="I posti veri, sulla mappa vera. Clicca uno spillo e leggi la storia." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="it_IT" />
+  <link rel="stylesheet" href="css/vintage-bridge.css" />
+  <link rel="stylesheet" href="css/shared-features.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <style>
+    .map-head {
+      padding: 140px 0 36px;
+      max-width: var(--container);
+      margin: 0 auto;
+      padding-left: var(--gutter);
+      padding-right: var(--gutter);
+    }
+    .map-head .crumbs { margin-bottom: 18px; }
+    .map-head h1 {
+      font-family: var(--display);
+      font-size: clamp(44px, 6.5vw, 84px);
+      line-height: 1.02;
+      color: var(--ink);
+      margin: 0 0 14px;
+    }
+    .map-head h1 em { color: var(--ocra); }
+    .map-head p {
+      font-size: 17px;
+      color: var(--ink-soft);
+      max-width: 560px;
+      margin: 0;
+      line-height: 1.6;
+    }
+    .map-legend {
+      display: flex;
+      gap: 22px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .map-legend span { display: inline-flex; align-items: center; gap: 7px; }
+    .leg-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #1A1410; display: inline-block; }
+
+    /* ---- Map frame ---- */
+    .map-frame {
+      max-width: var(--container);
+      margin: 0 auto 26px;
+      padding: 0 var(--gutter);
+    }
+    #map {
+      height: min(72vh, 680px);
+      border: 1px solid var(--ink);
+      box-shadow: 6px 8px 0 rgba(26,20,16,0.18);
+      background: #EADFC8;
+      z-index: 1;
+    }
+    /* tinta vintage alle tile */
+    .leaflet-tile { filter: sepia(0.32) saturate(0.78) contrast(0.96); }
+    .leaflet-container { font-family: var(--body); }
+
+    /* pin */
+    .pin {
+      width: 30px; height: 30px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      background: #C46A3F;
+      border: 2px solid #1A1410;
+      box-shadow: 2px 3px 6px rgba(26,20,16,0.35);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+    .pin span {
+      transform: rotate(45deg);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: #F1E9D8;
+    }
+    .pin.visited { background: #2D3A2E; }
+
+    /* popup vintage */
+    .leaflet-popup-content-wrapper {
+      border-radius: 0;
+      background: #F1E9D8;
+      border: 1px solid #1A1410;
+      box-shadow: 4px 5px 0 rgba(26,20,16,0.25);
+      padding: 0;
+    }
+    .leaflet-popup-content { margin: 0; width: 240px !important; }
+    .leaflet-popup-tip { background: #1A1410; }
+    .pop img { width: 100%; height: 120px; object-fit: cover; display: block; }
+    .pop-body { padding: 13px 15px 15px; }
+    .pop-kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8.5px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #A0532E;
+      margin-bottom: 5px;
+    }
+    .pop-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.15;
+      color: #1A1410;
+      margin: 0 0 6px;
+    }
+    .pop-text { font-size: 12.5px; line-height: 1.5; color: #5A4B3D; margin: 0 0 10px; }
+    .pop a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #A0532E;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* ---- Stop list under map ---- */
+    .stops {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 20px var(--gutter) 80px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 1000px) { .stops { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 540px)  { .stops { grid-template-columns: 1fr; } }
+    .stop {
+      border: 1px solid var(--line);
+      background: rgba(241,233,216,0.6);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+      text-align: left;
+      font: inherit;
+    }
+    .stop:hover { border-color: var(--ink); transform: translateY(-2px); box-shadow: 3px 4px 0 rgba(26,20,16,0.15); }
+    .stop-num {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      color: var(--ocra-dk);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .stop-name {
+      font-family: var(--display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+      display: block;
+    }
+    .stop-meta { font-size: 12px; color: var(--ink-soft); display: block; margin-top: 3px; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html"><img src="uploads/logo-caposud.png" alt="Capo Sud" class="nav-logo-img" /><small>Blog</small></a>
+      <ul class="nav-links">
+        <li><a class="nav-link" href="index.html">Home</a></li>
+        <li><a class="nav-link" href="blog.html">Blog</a></li>
+        <li><a class="nav-link" href="itinerari.html">Itinerari</a></li>
+        <li><a class="nav-link is-active" href="mappa.html">Mappa</a></li>
+        <li><a class="nav-link" href="servizi.html">Servizi</a></li>
+        <li><a class="nav-link" href="chi-sono.html">Chi sono</a></li>
+      </ul>
+      <a class="nav-cta" href="servizi.html">Pianifica con me <span>→</span></a>
+      <button class="nav-burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" id="closeMenu">✕</button>
+    <a class="nav-logo" href="index.html"><img src="uploads/logo-caposud.png" alt="Capo Sud" class="nav-logo-img" /></a>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="itinerari.html">Itinerari</a></li>
+      <li><a href="mappa.html">Mappa</a></li>
+      <li><a href="servizi.html">Servizi</a></li>
+      <li><a href="chi-sono.html">Chi sono</a></li>
+      <li><a href="contatti.html">Contatti</a></li>
+    </ul>
+  </div>
+
+  <!-- HEAD -->
+  <header class="map-head" data-screen-label="Mappa / Testata">
+    <div class="crumbs"><a href="index.html">Home</a> <span>/</span> Mappa</div>
+    <h1>La mappa <em>del viaggio.</em></h1>
+    <p>Ogni spillo è un posto dove sono stato davvero. Cliccalo: trovi la foto, due righe oneste e il link alla storia completa. Niente puntine messe a caso da una scrivania di Milano.</p>
+    <div class="map-legend">
+      <span><span class="leg-dot" style="background:#C46A3F;"></span> Tappa raccontata sul blog</span>
+      <span><span class="leg-dot" style="background:#2D3A2E;"></span> Casa mia (ci vivo)</span>
+    </div>
+  </header>
+
+  <!-- MAP -->
+  <div class="map-frame" data-screen-label="Mappa / Mappa interattiva">
+    <div id="map" aria-label="Mappa interattiva del Sudafrica con le tappe di Dario"></div>
+  </div>
+
+  <!-- STOP LIST -->
+  <div class="stops" id="stops" data-screen-label="Mappa / Elenco tappe"></div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo"><img src="uploads/logo-caposud.png" alt="Capo Sud" class="nav-logo-img" /></div>
+          <p>Il Sudafrica spiegato da chi ci vive. Storie e itinerari da Dario, romano in Sudafrica.</p>
+          <!-- TODO: sostituire i link social "#" con i profili reali (Instagram, TikTok, Facebook, Telegram) -->
+          <div class="footer-socials">
+            <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="18" cy="6" r="0.8" fill="currentColor"></circle></svg></a>
+            <a href="#" aria-label="TikTok"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82a4.83 4.83 0 01-3.77-4.25h-3.21v14.13a2.84 2.84 0 11-2-2.72v-3.3a6.1 6.1 0 105.2 6.04V9.25a8.16 8.16 0 003.78.93V7a4.85 4.85 0 010-1.18z"></path></svg></a>
+            <a href="#" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 10-11.6 9.87V14.9H7.9V12h2.5V9.8c0-2.47 1.47-3.84 3.72-3.84 1.08 0 2.2.2 2.2.2v2.4H15.1c-1.22 0-1.6.76-1.6 1.54V12h2.72l-.44 2.9h-2.28v6.97A10 10 0 0022 12z"></path></svg></a>
+            <a href="#" aria-label="Telegram"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21.5 4.5L2.5 12l4.5 1.5 1.5 5 3-3 5 4 5-15z"></path></svg></a>
+          </div>
+        </div>
+        <div><h5>Esplora</h5><ul><li><a href="index.html">Home</a></li><li><a href="blog.html">Blog</a></li><li><a href="itinerari.html">Itinerari</a></li><li><a href="mappa.html">Mappa</a></li></ul></div>
+        <div><h5>Lavora con me</h5><ul><li><a href="chi-sono.html">Chi sono</a></li><li><a href="servizi.html">Consulenza</a></li><li><a href="contatti.html">Contatti</a></li><li><a href="#">Newsletter</a></li></ul></div>
+        <div>
+          <h5>Sawubona Bot</h5>
+          <p style="color:rgba(255,255,255,0.7); font-size:14px; line-height: 1.5; margin: 0 0 12px;">Risposte 24/7 su Telegram.</p>
+          <!-- TODO: confermare username reale del bot Telegram --><a class="btn btn-primary" href="https://t.me/CapoSudBot" style="padding:10px 16px; min-height:auto;">Apri Sawubona →</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>Fatto con ☀️ da Dario — da qualche parte in Sudafrica</span>
+        <span>© 2026 Capo Sud</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    const STOPS = [
+      { n: '01', name: 'Cape Town', pos: [-33.9249, 18.4241], home: true,
+        meta: 'Casa mia · 6 mesi + 1 anno',
+        text: 'La città dove tutto è cominciato. Ci vivo, ci lavoro, ci torno sempre.',
+        img: 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?auto=format&fit=crop&w=600&q=70',
+        link: 'articolo.html', linkText: 'Quanto costa viverci →' },
+      { n: '02', name: 'Bo-Kaap', pos: [-33.9192, 18.4145],
+        meta: 'Cape Town · quartiere',
+        text: 'Le case colorate e la storia della comunità Cape Malay. A dieci minuti a piedi dal centro.',
+        img: 'uploads/pasted-1780309290299-0.png',
+        link: 'blog.html', linkText: 'Le storie dal Bo-Kaap →' },
+      { n: '03', name: 'Boulders Beach', pos: [-34.1975, 18.4523],
+        meta: 'Simon\u2019s Town · pinguini',
+        text: 'L\u2019unica spiaggia al mondo dove fai il bagno coi pinguini africani. Vai presto la mattina.',
+        img: 'uploads/pasted-1780309331061-0.png',
+        link: 'blog.html', linkText: 'Il racconto →' },
+      { n: '04', name: 'Stellenbosch', pos: [-33.9321, 18.8602],
+        meta: 'Winelands · vino',
+        text: 'Il vino sudafricano che batte certi francesi a un quinto del prezzo. Degustazioni da R80.',
+        img: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=600&q=70',
+        link: 'itinerari.html', linkText: 'Negli itinerari →' },
+      { n: '05', name: 'Hermanus', pos: [-34.4187, 19.2345],
+        meta: 'Overberg · balene',
+        text: 'Da giugno a novembre le balene franche australi si vedono dalla scogliera, gratis.',
+        img: 'https://images.unsplash.com/photo-1495492612451-7ad02b9418a5?auto=format&fit=crop&w=600&q=70',
+        link: 'itinerari.html', linkText: 'Quando andare →' },
+      { n: '06', name: 'Knysna', pos: [-34.0363, 23.0471],
+        meta: 'Garden Route · laguna',
+        text: 'Il cuore della Garden Route: laguna, foreste e le ostriche migliori del paese.',
+        img: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=600&q=70',
+        link: 'itinerari.html', linkText: 'L\u2019itinerario completo →' },
+      { n: '07', name: 'Addo Elephant Park', pos: [-33.4467, 25.7448],
+        meta: 'Eastern Cape · elefanti',
+        text: 'Dove ho abbracciato tre elefanti (la foto in homepage è di qui). Più di 600 esemplari.',
+        img: 'uploads/dario-elefanti.jpeg',
+        link: 'index.html', linkText: 'La foto della rivista →' },
+      { n: '08', name: 'Kruger National Park', pos: [-24.0117, 31.4853],
+        meta: 'Mpumalanga · Big Five',
+        text: 'Il safari vero. Self-drive da R486 al giorno, alba tra i leoni. Tutto quello che nessuno ti dice.',
+        img: 'https://images.unsplash.com/photo-1535941339077-2dd1c7963098?auto=format&fit=crop&w=600&q=70',
+        link: 'blog.html', linkText: 'La guida al Kruger →' }
+    ];
+
+    const map = L.map('map', { scrollWheelZoom: false });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
+      maxZoom: 18
+    }).addTo(map);
+
+    const markers = {};
+    STOPS.forEach(s => {
+      const icon = L.divIcon({
+        className: '',
+        html: '<div class="pin' + (s.home ? ' visited' : '') + '"><span>' + s.n + '</span></div>',
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -32]
+      });
+      const m = L.marker(s.pos, { icon }).addTo(map);
+      m.bindPopup(
+        '<div class="pop"><img src="' + s.img + '" alt="' + s.name + '">' +
+        '<div class="pop-body"><div class="pop-kicker">' + s.meta + '</div>' +
+        '<div class="pop-title">' + s.name + '</div>' +
+        '<p class="pop-text">' + s.text + '</p>' +
+        '<a href="' + s.link + '">' + s.linkText + '</a></div></div>'
+      );
+      markers[s.n] = m;
+    });
+
+    map.fitBounds(STOPS.map(s => s.pos), { padding: [40, 40] });
+
+    // stop list
+    const list = document.getElementById('stops');
+    STOPS.forEach(s => {
+      const b = document.createElement('button');
+      b.className = 'stop';
+      b.innerHTML = '<span class="stop-num">TAPPA ' + s.n + '</span><span class="stop-name">' + s.name + '</span><span class="stop-meta">' + s.meta + '</span>';
+      b.addEventListener('click', () => {
+        map.flyTo(s.pos, 9, { duration: 1.2 });
+        setTimeout(() => markers[s.n].openPopup(), 1300);
+      });
+      list.appendChild(b);
+    });
+  </script>
+  <script src="js/shared.js" defer></script>
+</body>
+</html>

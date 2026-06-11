@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Servizi — Capo Sud</title>
+  <meta name="description" content="Pianifica il tuo Sudafrica con me: itinerario su misura, consulenza video, kit di viaggio PDF." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F1E9D8'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-style='italic' font-weight='700' font-size='20' fill='%23C46A3F' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E" />
+  <meta property="og:title" content="Servizi — Capo Sud" />
+  <meta property="og:description" content="Pianifica il tuo Sudafrica con me: itinerario su misura, consulenza video, kit di viaggio PDF." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="it_IT" />
+  <link rel="stylesheet" href="css/vintage-bridge.css" />
+  <link rel="stylesheet" href="css/shared-features.css" />
+  <style>
+    /* Small hero */
+    .svc-hero {
+      padding: 140px 0 60px;
+      background: var(--night);
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+    .svc-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(201,137,42,0.15), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(46,204,113,0.10), transparent 50%);
+    }
+    .svc-hero-inner { position: relative; }
+    .svc-hero .crumbs { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 22px; }
+    .svc-hero .crumbs a { color: rgba(255,255,255,0.5); }
+    .svc-hero h1 {
+      font-size: clamp(48px, 7vw, 88px);
+      max-width: 900px;
+      color: var(--white);
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    .svc-hero h1 em { font-style: italic; color: var(--ocra); }
+    .svc-hero p { font-size: clamp(17px, 1.4vw, 20px); max-width: 600px; color: rgba(255,255,255,0.78); margin: 0; }
+
+    /* Pricing cards */
+    .pricing {
+      padding: clamp(80px, 10vw, 120px) 0;
+      background: var(--sand);
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+    @media (max-width: 980px) { .pricing-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; } }
+
+    .pcard {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 40px 36px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      border: 1px solid var(--line);
+      transition: transform 0.3s;
+    }
+    .pcard:hover { transform: translateY(-4px); }
+    .pcard.is-featured {
+      background: var(--night);
+      color: var(--white);
+      border: 0;
+      transform: scale(1.04);
+      z-index: 2;
+      box-shadow: 0 30px 60px -25px rgba(26,26,46,0.4);
+    }
+    .pcard.is-featured:hover { transform: scale(1.04) translateY(-4px); }
+    @media (max-width: 980px) { .pcard.is-featured { transform: none; } .pcard.is-featured:hover { transform: translateY(-4px); } }
+
+    .pcard-badge {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--ocra);
+      color: var(--white);
+      padding: 6px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      border-radius: 100px;
+    }
+    .pcard-icon {
+      width: 56px; height: 56px;
+      border-radius: 12px;
+      background: var(--sand);
+      color: var(--night);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .pcard.is-featured .pcard-icon {
+      background: rgba(201,137,42,0.18);
+      color: var(--ocra);
+    }
+    .pcard h3 {
+      font-size: 28px;
+      margin-bottom: 6px;
+      color: inherit;
+    }
+    .pcard .pcard-desc {
+      font-size: 14px;
+      color: var(--ink-soft);
+      margin: 0 0 24px;
+    }
+    .pcard.is-featured .pcard-desc { color: rgba(255,255,255,0.7); }
+
+    .pcard-price {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      padding-bottom: 28px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+    }
+    .pcard.is-featured .pcard-price { border-bottom-color: var(--line-dk); }
+    .pcard-from {
+      font-size: 12px;
+      color: var(--ink-soft);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-right: 6px;
+    }
+    .pcard.is-featured .pcard-from { color: rgba(255,255,255,0.55); }
+    .pcard-amount {
+      font-family: var(--accent);
+      font-size: 64px;
+      line-height: 1;
+      color: var(--ocra);
+    }
+    .pcard-unit {
+      font-size: 14px;
+      color: var(--ink-soft);
+    }
+    .pcard.is-featured .pcard-unit { color: rgba(255,255,255,0.65); }
+
+    .pcard ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex-grow: 1;
+    }
+    .pcard li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 15px;
+      color: var(--ink-soft);
+    }
+    .pcard.is-featured li { color: rgba(255,255,255,0.85); }
+    .pcard li::before {
+      content: '✓';
+      color: var(--capo);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .pcard-cta { width: 100%; }
+    .pcard.is-featured .btn-primary { background: var(--ocra); }
+    .pcard.is-featured .btn-primary:hover { background: var(--ocra-dk); }
+
+    /* Process */
+    .process {
+      padding: clamp(80px, 10vw, 120px) 0;
+    }
+    .process-head {
+      max-width: 720px;
+      margin: 0 auto 64px;
+      text-align: center;
+    }
+    .process-head h2 {
+      font-size: clamp(34px, 4.4vw, 52px);
+      margin-bottom: 14px;
+    }
+    .process-head p { color: var(--ink-soft); font-size: 17px; }
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+      position: relative;
+    }
+    .process-steps::before {
+      content: '';
+      position: absolute;
+      left: 6%; right: 6%;
+      top: 32px;
+      height: 1px;
+      background: var(--line);
+      z-index: 0;
+    }
+    .pstep { position: relative; z-index: 1; }
+    .pstep-num {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 1.5px solid var(--ocra);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--accent);
+      font-size: 28px;
+      color: var(--ocra);
+      margin-bottom: 22px;
+    }
+    .pstep h4 { font-family: var(--display); font-size: 22px; margin-bottom: 10px; }
+    .pstep p { font-size: 14px; color: var(--ink-soft); margin: 0; }
+    @media (max-width: 860px) {
+      .process-steps { grid-template-columns: 1fr; gap: 32px; }
+      .process-steps::before { display: none; }
+    }
+
+    /* Testimonial */
+    .testimonial {
+      padding: clamp(60px, 8vw, 100px) 0;
+      background: var(--ocra);
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+    .testimonial::before {
+      content: '"';
+      position: absolute;
+      top: -60px;
+      right: 5%;
+      font-family: var(--display);
+      font-size: 480px;
+      line-height: 0.8;
+      color: rgba(255,255,255,0.12);
+    }
+    .testimonial-inner {
+      position: relative;
+      max-width: 820px;
+    }
+    .testimonial blockquote {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: clamp(24px, 3vw, 38px);
+      line-height: 1.35;
+      margin: 0 0 32px;
+    }
+    .testimonial-cite {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+    .testimonial-cite img {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .testimonial-cite strong { display: block; font-weight: 600; }
+    .testimonial-cite span { font-size: 13px; opacity: 0.85; }
+
+    /* FAQ */
+    .faq {
+      padding: clamp(80px, 10vw, 120px) 0;
+      background: var(--white);
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 80px;
+    }
+    .faq-grid h2 {
+      font-size: clamp(34px, 4vw, 48px);
+      margin-bottom: 16px;
+    }
+    .faq-grid > div:first-child p {
+      color: var(--ink-soft);
+      font-size: 16px;
+      margin-bottom: 24px;
+    }
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--line);
+    }
+    .faq-item summary {
+      padding: 22px 0;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      font-family: var(--display);
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after {
+      content: '+';
+      font-family: var(--body);
+      font-size: 28px;
+      color: var(--ocra);
+      font-weight: 300;
+      transition: transform 0.2s;
+    }
+    .faq-item[open] summary::after { content: '–'; }
+    .faq-item p {
+      margin: 0 0 22px;
+      font-size: 16px;
+      color: var(--ink-soft);
+      line-height: 1.65;
+      max-width: 680px;
+    }
+    @media (max-width: 860px) {
+      .faq-grid { grid-template-columns: 1fr; gap: 36px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html"><img src="uploads/logo-caposud.png" alt="Capo Sud" class="nav-logo-img" /><small>Blog</small></a>
+      <ul class="nav-links">
+        <li><a class="nav-link" href="index.html">Home</a></li>
+        <li><a class="nav-link" href="blog.html">Blog</a></li>
+        <li><a class="nav-link" href="itinerari.html">Itinerari</a></li>
+        <li><a class="nav-link is-active" href="servizi.html">Servizi</a></li>
+        <li><a class="nav-link" href="chi-sono.html">Chi sono</a></li>
+      </ul>
+      <a class="nav-cta" href="#pricing">Pianifica con me <span>→</span></a>
+      <button class="nav-burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" id="closeMenu">✕</button>
+    <a class="nav-logo" href="index.html"><img src="uploads/logo-caposud.png" alt="Capo Sud" class="nav-logo-img" /></a>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="itinerari.html">Itinerari</a></li>
+      <li><a href="servizi.html">Servizi</a></li>
+      <li><a href="chi-sono.html">Chi sono</a></li>
+      <li><a href="contatti.html">Contatti</a></li>
+    </ul>
+  </div>
+
+  <!-- HERO -->
+  <header class="svc-hero" data-screen-label="Servizi / Hero">
+    <div class="container svc-hero-inner">
+      <div class="crumbs"><a href="index.html">Home</a> <span>/</span> Servizi</div>
+      <h1>Pianifica il tuo<br /><em>Sudafrica</em> con me.</h1>
+      <p>Tre modi di lavorare insieme — dalla domanda veloce all'itinerario completo costruito su di te.</p>
+    </div>
+  </header>
+
+  <!-- PRICING -->
+  <section class="pricing" id="pricing" data-screen-label="Servizi / Pricing cards">
+    <div class="container">
+      <div class="pricing-grid">
+
+        <!-- 1 -->
+        <div class="pcard">
+          <div class="pcard-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 4l-6 2v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>
+          </div>
+          <h3>Itinerario su misura</h3>
+          <p class="pcard-desc">Un piano giorno per giorno, costruito su di te.</p>
+          <div class="pcard-price">
+            <span class="pcard-from">da</span>
+            <span class="pcard-amount">€49</span>
+            <span class="pcard-unit">/itinerario</span>
+          </div>
+          <ul>
+            <li>Itinerario giorno per giorno in PDF</li>
+            <li>Consigli alloggi per fascia di budget</li>
+            <li>Trasporti e logistica completi</li>
+            <li>Tips locali e indirizzi insider</li>
+            <li>1 revisione gratuita inclusa</li>
+          </ul>
+          <!-- TODO: collegare il link Calendly reale -->
+          <a class="btn btn-dark pcard-cta" href="#calendly">Richiedi ora →</a>
+        </div>
+
+        <!-- 2 - featured -->
+        <div class="pcard is-featured">
+          <span class="pcard-badge">Più richiesta</span>
+          <div class="pcard-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-6 4 6 4V8z"/></svg>
+          </div>
+          <h3>Consulenza Video</h3>
+          <p class="pcard-desc">30 minuti in videochiamata + assistenza WhatsApp post-viaggio.</p>
+          <div class="pcard-price">
+            <span class="pcard-amount">€29</span>
+            <span class="pcard-unit">/30 min</span>
+          </div>
+          <ul>
+            <li>✓ Videochiamata 30 minuti via Zoom</li>
+            <li>Rispondo a tutte le tue domande</li>
+            <li>Piano personalizzato in diretta</li>
+            <li>Note scritte inviate via email</li>
+            <li>Follow-up via messaggio per 7 giorni</li>
+          </ul>
+          <a class="btn btn-primary pcard-cta" href="#calendly">Prenota ora →</a>
+        </div>
+
+        <!-- 3 -->
+        <div class="pcard">
+          <div class="pcard-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12l8.73-5.04M12 22V12"/></svg>
+          </div>
+          <h3>Kit Viaggio PDF</h3>
+          <p class="pcard-desc">50+ pagine. Quello che ho costruito io, vivendoci.</p>
+          <div class="pcard-price">
+            <span class="pcard-amount">€19</span>
+            <span class="pcard-unit">una tantum</span>
+          </div>
+          <ul>
+            <li>50+ pagine in italiano</li>
+            <li>Budget dettagliato in € e Rand</li>
+            <li>Lista alloggi consigliati (4 fasce)</li>
+            <li>Mappe e itinerari editabili</li>
+            <li>Aggiornamenti gratuiti per 1 anno</li>
+          </ul>
+          <a class="btn btn-dark pcard-cta" href="#">Acquista →</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" data-screen-label="Servizi / Come funziona">
+    <div class="container">
+      <div class="process-head">
+        <span class="eyebrow">Come funziona</span>
+        <h2>Da "voglio andarci" a partito,<br />in quattro passi.</h2>
+        <p>Stesso processo per tutti e tre i servizi. Solo il modo di parlarci cambia.</p>
+      </div>
+      <div class="process-steps">
+        <div class="pstep">
+          <div class="pstep-num">1</div>
+          <h4>Scegli un servizio</h4>
+          <p>Itinerario, video, PDF — o tutti e tre. Prenoti online o mi scrivi.</p>
+        </div>
+        <div class="pstep">
+          <div class="pstep-num">2</div>
+          <h4>Ti faccio domande</h4>
+          <p>Tempi, budget, compagni, energie. Più sei specifico, meglio è.</p>
+        </div>
+        <div class="pstep">
+          <div class="pstep-num">3</div>
+          <h4>Lavoro per te</h4>
+          <p>Costruisco il tuo piano. Dal Sudafrica, con prezzi e contatti veri.</p>
+        </div>
+        <div class="pstep">
+          <div class="pstep-num">4</div>
+          <h4>Parti e mi scrivi</h4>
+          <p>Hai un dubbio in viaggio? Risposta entro 24h. Sempre.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIAL -->
+  <section class="testimonial" data-screen-label="Servizi / Testimonial">
+    <div class="container">
+      <div class="testimonial-inner">
+        <blockquote>
+          Avevo passato due mesi su Google e mi ero solo confusa di più. Con 30 minuti di Dario ho avuto un piano che funziona davvero — e mi ha fatto risparmiare 600€ di alloggi.
+        </blockquote>
+        <div class="testimonial-cite">
+          <span aria-hidden="true" style="width:46px;height:46px;border-radius:50%;background:var(--ocra);color:#F1E9D8;display:inline-flex;align-items:center;justify-content:center;font-family:var(--display);font-style:italic;font-weight:700;font-size:19px;flex-shrink:0;">G</span>
+          <div>
+            <strong>Giulia M.</strong>
+            <span>Milano · Viaggio di 12 giorni nel Nov 2024</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" data-screen-label="Servizi / FAQ">
+    <div class="container">
+      <div class="faq-grid">
+        <div>
+          <span class="eyebrow">Domande frequenti</span>
+          <h2>Tutto quello che mi chiedono prima di prenotare.</h2>
+          <p>Non trovi la risposta? Scrivimi su Telegram o usa Sawubona — ti rispondo subito.</p>
+          <a class="btn btn-ghost" href="contatti.html">Contattami →</a>
+        </div>
+        <div class="faq-list">
+          <details class="faq-item" open>
+            <summary>Quanto tempo in anticipo devo pianificare?</summary>
+            <p>Per alta stagione (dicembre-febbraio) almeno 4-5 mesi prima per i voli decenti. Per il resto dell'anno 2 mesi bastano. Se mi scrivi 6 settimane prima riusciamo a fare un piano completo senza fretta.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Posso contattarti mentre sono lì?</summary>
+            <p>Sì, ed è proprio il valore aggiunto. Per chi prende l'itinerario su misura o la consulenza, c'è follow-up via messaggio. Se hai un dubbio in viaggio — alloggio cambiato, ristorante chiuso, gomma a terra — ti rispondo. Vivo lì.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Pagate in euro o in Rand?</summary>
+            <p>I miei servizi li paghi in euro. Il viaggio (alloggi, ristoranti, benzina) lo pagherai in Rand. Nel PDF e nell'itinerario su misura trovi sempre entrambi i prezzi, aggiornati al cambio del momento.</p>
+          </details>
+          <details class="faq-item">
+            <summary>E se cambio idea dopo aver prenotato?</summary>
+            <p>Per la consulenza video: cancelli entro 24h e ti rimborso tutto. Per l'itinerario su misura: se ho già iniziato a lavorarci ti rimborso il 50%. Per il PDF: refund completo entro 7 giorni se non lo hai aperto.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Prenoti tu voli e alloggi al mio posto?</summary>
+            <p>No. Ti consiglio cosa prenotare, dove e a che prezzo, ma le prenotazioni le fai tu. Voglio che impari a muoverti, non a dipendere da me. Per ora — quando diventerò agenzia sarà diverso.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Funziona anche per famiglie con bambini?</summary>
+            <p>Sì. Anzi: il Sudafrica con bambini ha logiche tutte sue (malaria-free zones, distanze, safari adatti). Diccelo nelle domande iniziali, ti faccio un piano che tiene conto di tutto.</p>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo"><img src="uploads/logo-caposud.png" alt="Capo Sud" class="nav-logo-img" /></div>
+          <p>Il Sudafrica spiegato da chi ci vive. Storie e itinerari da Dario, romano in Sudafrica.</p>
+          <!-- TODO: sostituire i link social "#" con i profili reali (Instagram, TikTok, Facebook, Telegram) -->
+          <div class="footer-socials">
+            <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="18" cy="6" r="0.8" fill="currentColor"/></svg></a>
+            <a href="#" aria-label="TikTok"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82a4.83 4.83 0 01-3.77-4.25h-3.21v14.13a2.84 2.84 0 11-2-2.72v-3.3a6.1 6.1 0 105.2 6.04V9.25a8.16 8.16 0 003.78.93V7a4.85 4.85 0 010-1.18z"/></svg></a>
+            <a href="#" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 10-11.6 9.87V14.9H7.9V12h2.5V9.8c0-2.47 1.47-3.84 3.72-3.84 1.08 0 2.2.2 2.2.2v2.4H15.1c-1.22 0-1.6.76-1.6 1.54V12h2.72l-.44 2.9h-2.28v6.97A10 10 0 0022 12z"/></svg></a>
+            <a href="#" aria-label="Telegram"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21.5 4.5L2.5 12l4.5 1.5 1.5 5 3-3 5 4 5-15z"/></svg></a>
+          </div>
+        </div>
+        <div><h5>Esplora</h5><ul><li><a href="index.html">Home</a></li><li><a href="blog.html">Blog</a></li><li><a href="itinerari.html">Itinerari</a></li><li><a href="servizi.html">Servizi</a></li></ul></div>
+        <div><h5>Lavora con me</h5><ul><li><a href="chi-sono.html">Chi sono</a></li><li><a href="servizi.html">Consulenza</a></li><li><a href="contatti.html">Contatti</a></li><li><a href="#">Newsletter</a></li></ul></div>
+        <div>
+          <h5>Sawubona Bot</h5>
+          <p style="color:rgba(255,255,255,0.7); font-size:14px; line-height: 1.5; margin: 0 0 12px;">Risposte 24/7 su Telegram.</p>
+          <!-- TODO: confermare username reale del bot Telegram --><a class="btn btn-primary" href="https://t.me/CapoSudBot" style="padding:10px 16px; min-height:auto;">Apri Sawubona →</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>Fatto con ☀️ da Dario — da qualche parte in Sudafrica</span>
+        <span>© 2026 Capo Sud</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="tg-sticky"><div class="tg-sticky-text"><strong>💬 Parla con Sawubona</strong><span>Domande veloci? Risposta in 30s.</span></div><a href="https://t.me/CapoSudBot">Apri</a></div>
+
+  <script>
+    // Mobile menu: gestito da js/shared.js
+  </script>
+  <script src="js/shared.js" defer></script>
+</body>
+</html>

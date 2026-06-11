@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Blog — Capo Sud</title>
+  <meta name="description" content="Articoli sul Sudafrica: costi, itinerari, cultura, vita quotidiana e safari. Scritti da Dario dal posto." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F1E9D8'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-style='italic' font-weight='700' font-size='20' fill='%23C46A3F' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E" />
+  <meta property="og:title" content="Blog — Capo Sud" />
+  <meta property="og:description" content="Articoli sul Sudafrica: costi, itinerari, cultura, vita quotidiana e safari. Scritti da Dario dal posto." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="it_IT" />
+  <link rel="stylesheet" href="css/vintage-bridge.css" />
+  <link rel="stylesheet" href="css/shared-features.css" />
+  <style>
+    /* ---- Page hero ---- */
+    .page-hero {
+      position: relative;
+      min-height: 56vh;
+      color: var(--white);
+      display: flex;
+      align-items: flex-end;
+      padding: 140px 0 60px;
+      overflow: hidden;
+    }
+    .page-hero-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1580060839134-75a5edca2e99?auto=format&fit=crop&w=2400&q=80');
+      background-size: cover;
+      background-position: center 40%;
+    }
+    .page-hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(26,26,46,0.4) 0%, rgba(26,26,46,0.8) 100%);
+    }
+    .page-hero-inner {
+      position: relative;
+      width: 100%;
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+    .page-hero h1 {
+      font-size: clamp(48px, 7vw, 88px);
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+    .page-hero p {
+      font-size: clamp(16px, 1.4vw, 19px);
+      max-width: 560px;
+      color: rgba(255,255,255,0.85);
+      margin: 0;
+    }
+    .crumbs {
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 22px;
+    }
+    .crumbs a { color: rgba(255,255,255,0.6); }
+    .crumbs span { margin: 0 8px; opacity: 0.5; }
+
+    /* ---- Filters ---- */
+    .filters {
+      position: sticky;
+      top: 60px;
+      background: var(--white);
+      z-index: 50;
+      border-bottom: 1px solid var(--line);
+      padding: 18px 0;
+    }
+    .filters-row {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .filters-row::-webkit-scrollbar { display: none; }
+    .filter-chip {
+      padding: 10px 18px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .filter-chip:hover { border-color: var(--ink); }
+    .filter-chip.is-active {
+      background: var(--night);
+      color: var(--white);
+      border-color: var(--night);
+    }
+
+    /* ---- Layout ---- */
+    .blog-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 80px;
+      padding: 64px 0;
+    }
+    .blog-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px 40px;
+    }
+    @media (max-width: 1080px) {
+      .blog-layout { grid-template-columns: 1fr; gap: 40px; }
+    }
+    @media (max-width: 640px) {
+      .blog-list { grid-template-columns: 1fr; gap: 44px; }
+    }
+
+    /* ---- Sidebar ---- */
+    .side-block {
+      padding: 28px;
+      border: 1px solid var(--line);
+      margin-bottom: 24px;
+    }
+    .side-block-dark {
+      background: var(--night);
+      color: var(--white);
+      border: 0;
+    }
+    .side-block h4 {
+      font-family: var(--body);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin: 0 0 18px;
+    }
+    .side-block-dark h4 { color: rgba(255,255,255,0.6); }
+    .top-list {
+      list-style: none;
+      padding: 0; margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .top-list a {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .top-list-num {
+      font-family: var(--accent);
+      font-size: 28px;
+      color: var(--ocra);
+      line-height: 1;
+      min-width: 28px;
+    }
+    .top-list-title {
+      font-family: var(--display);
+      font-size: 16px;
+      line-height: 1.3;
+      color: var(--ink);
+    }
+    .top-list-meta {
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin-top: 4px;
+    }
+    .side-cta {
+      background: var(--sand);
+      padding: 28px;
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+    }
+    .side-cta h4 {
+      font-family: var(--display);
+      font-size: 22px;
+      color: var(--ink);
+      letter-spacing: 0;
+      text-transform: none;
+      margin: 0 0 10px;
+    }
+    .side-cta p {
+      font-size: 14px;
+      color: var(--ink-soft);
+      margin: 0 0 18px;
+    }
+
+    /* Featured first card spans both */
+    .blog-list .article-card.is-feature {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .blog-list .article-card.is-feature .article-card-img {
+      aspect-ratio: 4/3;
+      margin: 0;
+    }
+    .blog-list .article-card.is-feature h3 {
+      font-size: 32px;
+      line-height: 1.15;
+    }
+    .blog-list .article-card.is-feature p {
+      -webkit-line-clamp: 4;
+      font-size: 16px;
+    }
+    @media (max-width: 760px) {
+      .blog-list .article-card.is-feature { grid-template-columns: 1fr; gap: 18px; }
+      .blog-list .article-card.is-feature h3 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html"><img src="uploads/logo-caposud.png" alt="Capo Sud" class="nav-logo-img" /><small>Blog</small></a>
+      <ul class="nav-links">
+        <li><a class="nav-link" href="index.html">Home</a></li>
+        <li><a class="nav-link is-active" href="blog.html">Blog</a></li>
+        <li><a class="nav-link" href="itinerari.html">Itinerari</a></li>
+        <li><a class="nav-link" href="servizi.html">Servizi</a></li>
+        <li><a class="nav-link" href="chi-sono.html">Chi sono</a></li>
+      </ul>
+      <a class="nav-cta" href="servizi.html">Pianifica con me <span>→</span></a>
+      <button class="nav-burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" id="closeMenu">✕</button>
+    <a class="nav-logo" href="index.html"><img src="uploads/logo-caposud.png" alt="Capo Sud" class="nav-logo-img" /></a>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="itinerari.html">Itinerari</a></li>
+      <li><a href="servizi.html">Servizi</a></li>
+      <li><a href="chi-sono.html">Chi sono</a></li>
+      <li><a href="contatti.html">Contatti</a></li>
+    </ul>
+  </div>
+
+  <!-- HERO -->
+  <header class="page-hero" data-screen-label="Blog / Hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-overlay"></div>
+    <div class="page-hero-inner">
+      <div class="crumbs"><a href="index.html">Home</a> <span>/</span> Blog</div>
+      <h1>Diario dal Sudafrica</h1>
+      <p>Storie, consigli, errori e scoperte. Ogni articolo è qualcosa che ho vissuto o capito vivendoci.</p>
+    </div>
+  </header>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <div class="container">
+      <div class="filters-row" id="filters">
+        <button class="filter-chip is-active" data-cat="all">Tutti</button>
+        <button class="filter-chip" data-cat="costi">Costi</button>
+        <button class="filter-chip" data-cat="itinerari">Itinerari</button>
+        <button class="filter-chip" data-cat="cultura">Cultura</button>
+        <button class="filter-chip" data-cat="vita">Vita quotidiana</button>
+        <button class="filter-chip" data-cat="safari">Safari</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYOUT -->
+  <main class="container" data-screen-label="Blog / Articles list">
+    <div class="blog-layout">
+      <div class="blog-list" id="list">
+
+        <!-- Featured -->
+        <a class="article-card is-feature" href="articolo.html" data-cat="costi">
+          <div class="article-card-img">
+            <img src="https://images.unsplash.com/photo-1580060839134-75a5edca2e99?auto=format&fit=crop&w=1400&q=80" alt="Cape Town vista da Signal Hill" loading="lazy">
+          </div>
+          <div>
+            <div class="article-card-meta">
+              <span class="tag tag-night">Costi</span>
+              <span>· 8 min · 15 Mag 2025</span>
+            </div>
+            <h3>Quanto costa davvero un viaggio in Sudafrica nel 2025</h3>
+            <p>Voli da Roma, alloggi da Cape Town al Kruger, cibo, safari, rent-a-car: ho rifatto i conti con scontrini alla mano. Spoiler: meno di quello che pensi, ma con sorprese.</p>
+            <span class="read-more">Leggi l'articolo <span>→</span></span>
+          </div>
+        </a>
+
+        <a class="article-card" href="#" data-cat="itinerari">
+          <div class="article-card-img"><img src="uploads/pasted-1780309331061-0.png" style="object-position: center 70%" alt="I pinguini africani di Boulders Beach, Simon's Town" loading="lazy" /></div>
+          <div class="article-card-meta"><span class="tag tag-ocra">Itinerari</span><span>· 12 min · 02 Mag 2025</span></div>
+          <h3>Cape Town in 5 giorni: l'itinerario che mi ha cambiato</h3>
+          <p>Dal Bo-Kaap al Capo di Buona Speranza, passando per i posti che non trovi nelle guide.</p>
+          <span class="read-more">Leggi <span>→</span></span>
+        </a>
+
+        <a class="article-card" href="#" data-cat="safari">
+          <div class="article-card-img"><img src="https://images.unsplash.com/photo-1523805009345-7448845a9e53?auto=format&fit=crop&w=900&q=80" alt="Elefante africano al Kruger National Park" loading="lazy" /></div>
+          <div class="article-card-meta"><span class="tag tag-capo">Safari</span><span>· 10 min · 24 Apr 2025</span></div>
+          <h3>Safari al Kruger: tutto quello che nessuno ti dice</h3>
+          <p>Self-drive vs lodge guidato. Quale stagione. E perché il "Big Five" è solo metà della storia.</p>
+          <span class="read-more">Leggi <span>→</span></span>
+        </a>
+
+        <a class="article-card" href="#" data-cat="cultura">
+          <div class="article-card-img"><img src="uploads/pasted-1780309290299-0.png" style="object-position: center 55%" alt="Le case colorate del Bo-Kaap, Cape Town" loading="lazy" /></div>
+          <div class="article-card-meta"><span class="tag">Cultura</span><span>· 7 min · 18 Apr 2025</span></div>
+          <h3>11 lingue ufficiali: cosa serve sapere prima di partire</h3>
+          <p>Inglese basta? Sì. Ma capire perché ce ne sono 11 cambia tutto il viaggio.</p>
+          <span class="read-more">Leggi <span>→</span></span>
+        </a>
+
+        <a class="article-card" href="#" data-cat="vita">
+          <div class="article-card-img"><img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=900&q=80" alt="Savana sudafricana al tramonto" loading="lazy" /></div>
+          <div class="article-card-meta"><span class="tag">Vita quotidiana</span><span>· 6 min · 09 Apr 2025</span></div>
+          <h3>Load shedding: come si vive senza luce 4 ore al giorno</h3>
+          <p>Una delle prime cose che ti spiazza. E come tutti i locali si sono organizzati.</p>
+          <span class="read-more">Leggi <span>→</span></span>
+        </a>
+
+        <a class="article-card" href="#" data-cat="costi">
+          <div class="article-card-img"><img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=900&q=80" alt="In viaggio nella savana al tramonto" loading="lazy" /></div>
+          <div class="article-card-meta"><span class="tag tag-night">Costi</span><span>· 9 min · 28 Mar 2025</span></div>
+          <h3>Affittare auto in Sudafrica: prezzi, trucchi e errori</h3>
+          <p>Da Cape Town al Kruger sono 1.700 km. Ecco come ho speso meno della metà degli altri.</p>
+          <span class="read-more">Leggi <span>→</span></span>
+        </a>
+
+        <a class="article-card" href="#" data-cat="itinerari">
+          <div class="article-card-img"><img src="https://images.unsplash.com/photo-1495492612451-7ad02b9418a5?auto=format&fit=crop&w=900&q=80" alt="Tramonto sull'oceano lungo la Garden Route" loading="lazy" /></div>
+          <div class="article-card-meta"><span class="tag tag-ocra">Itinerari</span><span>· 11 min · 17 Mar 2025</span></div>
+          <h3>Garden Route: 7 giorni tra oceano, foreste e baie</h3>
+          <p>La strada più bella del Sudafrica. Tappe, alloggi e quando fermarsi davvero.</p>
+          <span class="read-more">Leggi <span>→</span></span>
+        </a>
+
+        <a class="article-card" href="#" data-cat="cultura">
+          <div class="article-card-img"><img src="https://images.unsplash.com/photo-1580060839134-75a5edca2e99?auto=format&fit=crop&w=900&q=80" alt="Cape Town dall'alto" loading="lazy" /></div>
+          <div class="article-card-meta"><span class="tag">Cultura</span><span>· 8 min · 05 Mar 2025</span></div>
+          <h3>Township tour: andarci o non andarci?</h3>
+          <p>Tema delicato. Te lo racconto dopo essere andato a Langa con un amico locale.</p>
+          <span class="read-more">Leggi <span>→</span></span>
+        </a>
+
+      </div>
+
+      <!-- SIDEBAR -->
+      <aside>
+        <div class="side-block">
+          <h4>Articoli più letti</h4>
+          <ul class="top-list">
+            <li><a href="articolo.html">
+              <span class="top-list-num">01</span>
+              <span>
+                <span class="top-list-title">Quanto costa davvero un viaggio in Sudafrica nel 2025</span>
+                <span class="top-list-meta">Costi · 8 min</span>
+              </span>
+            </a></li>
+            <li><a href="#">
+              <span class="top-list-num">02</span>
+              <span>
+                <span class="top-list-title">Cape Town in 5 giorni: l'itinerario che mi ha cambiato</span>
+                <span class="top-list-meta">Itinerari · 12 min</span>
+              </span>
+            </a></li>
+            <li><a href="#">
+              <span class="top-list-num">03</span>
+              <span>
+                <span class="top-list-title">Safari al Kruger: tutto quello che nessuno ti dice</span>
+                <span class="top-list-meta">Safari · 10 min</span>
+              </span>
+            </a></li>
+            <li><a href="#">
+              <span class="top-list-num">04</span>
+              <span>
+                <span class="top-list-title">Affittare auto in Sudafrica: prezzi, trucchi e errori</span>
+                <span class="top-list-meta">Costi · 9 min</span>
+              </span>
+            </a></li>
+          </ul>
+        </div>
+
+        <div class="side-cta">
+          <h4>Una domanda specifica?</h4>
+          <p>30 minuti con me in videochiamata. Ti rispondo a tutto e usciamo con un piano.</p>
+          <a class="btn btn-primary" href="servizi.html" style="width:100%;">Prenota consulenza →</a>
+        </div>
+
+        <div class="side-block side-block-dark">
+          <h4>Sawubona Bot</h4>
+          <p style="font-size:15px; line-height: 1.5; color: rgba(255,255,255,0.85); margin: 0 0 14px;">
+            Il mio assistente AI risponde 24/7 su Telegram. Conosce ogni articolo del blog.
+          </p>
+          <!-- TODO: confermare username reale del bot Telegram --><a class="btn btn-primary" href="https://t.me/CapoSudBot" style="width:100%;">Apri su Telegram →</a>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo"><img src="uploads/logo-caposud.png" alt="Capo Sud" class="nav-logo-img" /></div>
+          <p>Il Sudafrica spiegato da chi ci vive. Storie e itinerari da Dario, romano in Sudafrica.</p>
+          <!-- TODO: sostituire i link social "#" con i profili reali (Instagram, TikTok, Facebook, Telegram) -->
+          <div class="footer-socials">
+            <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="18" cy="6" r="0.8" fill="currentColor"/></svg></a>
+            <a href="#" aria-label="TikTok"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82a4.83 4.83 0 01-3.77-4.25h-3.21v14.13a2.84 2.84 0 11-2-2.72v-3.3a6.1 6.1 0 105.2 6.04V9.25a8.16 8.16 0 003.78.93V7a4.85 4.85 0 010-1.18z"/></svg></a>
+            <a href="#" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 10-11.6 9.87V14.9H7.9V12h2.5V9.8c0-2.47 1.47-3.84 3.72-3.84 1.08 0 2.2.2 2.2.2v2.4H15.1c-1.22 0-1.6.76-1.6 1.54V12h2.72l-.44 2.9h-2.28v6.97A10 10 0 0022 12z"/></svg></a>
+            <a href="#" aria-label="Telegram"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21.5 4.5L2.5 12l4.5 1.5 1.5 5 3-3 5 4 5-15z"/></svg></a>
+          </div>
+        </div>
+        <div><h5>Esplora</h5><ul><li><a href="index.html">Home</a></li><li><a href="blog.html">Blog</a></li><li><a href="itinerari.html">Itinerari</a></li><li><a href="servizi.html">Servizi</a></li></ul></div>
+        <div><h5>Lavora con me</h5><ul><li><a href="chi-sono.html">Chi sono</a></li><li><a href="servizi.html">Consulenza</a></li><li><a href="contatti.html">Contatti</a></li><li><a href="#">Newsletter</a></li></ul></div>
+        <div>
+          <h5>Sawubona Bot</h5>
+          <p style="color:rgba(255,255,255,0.7); font-size:14px; line-height: 1.5; margin: 0 0 12px;">Risposte 24/7 su Telegram.</p>
+          <!-- TODO: confermare username reale del bot Telegram --><a class="btn btn-primary" href="https://t.me/CapoSudBot" style="padding:10px 16px; min-height:auto;">Apri Sawubona →</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>Fatto con ☀️ da Dario — da qualche parte in Sudafrica</span>
+        <span>© 2026 Capo Sud</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="tg-sticky"><div class="tg-sticky-text"><strong>💬 Parla con Sawubona</strong><span>Domande veloci? Risposta in 30s.</span></div><a href="https://t.me/CapoSudBot">Apri</a></div>
+
+  <script>
+    // Mobile menu: gestito da js/shared.js
+
+    // Filters (conteggi calcolati dai dati reali, mai hardcoded)
+    const chips = document.querySelectorAll('.filter-chip');
+    const cards = document.querySelectorAll('#list .article-card');
+    chips.forEach(c => {
+      const cat = c.dataset.cat;
+      const n = cat === 'all' ? cards.length : [...cards].filter(k => k.dataset.cat === cat).length;
+      c.textContent = c.textContent.trim() + ' · ' + n;
+      c.addEventListener('click', () => {
+        chips.forEach(x => x.classList.remove('is-active'));
+        c.classList.add('is-active');
+        cards.forEach(card => {
+          card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+        });
+      });
+    });
+  </script>
+  <script src="js/shared.js" defer></script>
+</body>
+</html>

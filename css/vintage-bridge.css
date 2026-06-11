@@ -1,0 +1,149 @@
+/* ============================================================
+   CAPO SUD — vintage-bridge.css
+   Porta le pagine interne (costruite su styles.css) nel design
+   system "Vintage Travel Magazine" della home, SENZA riscrivere
+   il markup: rimappa i token e ritocca i componenti chiave.
+   Ordine di caricamento: styles.css → vintage-bridge.css →
+   shared-features.css
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600;1,700&family=Manrope:wght@400;600&family=JetBrains+Mono:wght@400&display=swap');
+
+:root {
+  /* --- rimappa la vecchia palette sui token vintage --- */
+  --night:    #1A1410;            /* era blu notte → inchiostro espresso */
+  --ocra:     #C46A3F;            /* era oro → terracotta */
+  --ocra-dk:  #A0532E;
+  --capo:     #D9A441;            /* era verde acceso → oro caldo */
+  --sand:     #EADFC8;            /* sabbia → carta scura */
+  --ink:      #1A1410;
+  --ink-soft: #5A4B3D;
+  --line:     rgba(26, 20, 16, 0.18);
+  --line-dk:  rgba(241, 233, 216, 0.16);
+  --white:    #F7F1E3;            /* mai bianco puro: bianco carta */
+
+  /* --- tipografia vintage --- */
+  --display: 'Playfair Display', 'Times New Roman', serif;
+  --body:    'Manrope', -apple-system, sans-serif;
+  --accent:  'Playfair Display', 'Times New Roman', serif; /* era Bebas */
+  --mono:    'JetBrains Mono', ui-monospace, monospace;
+
+  --radius: 0;                    /* niente angoli arrotondati */
+}
+
+/* ---------- BASE: fondo carta + grana ---------- */
+body {
+  background: #F1E9D8;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.2 0 0 0 0 0.16 0 0 0 0 0.12 0 0 0 0.45 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+h1, h2, h3, h4 { font-weight: 700; }
+
+/* ---------- NAV: carta, logo serif, link monospace ---------- */
+.nav {
+  background: rgba(241, 233, 216, 0.94);
+  border-bottom: 1px solid var(--line);
+}
+.nav-logo {
+  font-family: var(--display);
+  font-weight: 700;
+  font-style: italic;
+  font-size: 24px;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+.nav-logo small { color: var(--ink-soft); }
+.nav-link {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.nav-link.is-active { color: var(--ocra); }
+.nav-cta {
+  border-radius: 0;
+  background: var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.nav-cta:hover { background: var(--ocra); transform: none; box-shadow: 3px 4px 0 rgba(26, 20, 16, 0.3); }
+
+/* ---------- BOTTONI: squadrati, ombra dura ---------- */
+.btn { border-radius: 0; }
+.btn-primary { background: var(--ocra); }
+.btn-primary:hover { background: var(--ocra-dk); transform: none; box-shadow: 4px 6px 0 var(--ink); }
+.btn-dark:hover { background: #3a2c20; }
+
+/* ---------- TAG: monospace da timbro ---------- */
+.tag {
+  border-radius: 0;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ---------- HERO PAGINE: tinta espresso ---------- */
+.page-hero-overlay {
+  background: linear-gradient(180deg, rgba(26, 20, 16, 0.35) 0%, rgba(26, 20, 16, 0.82) 100%);
+}
+.page-hero h1 { font-weight: 700; }
+.crumbs { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; }
+.crumbs::before {
+  content: 'CAPO SUD · RIVISTA DAL SUDAFRICA  —  ';
+  color: var(--capo);
+}
+.about-eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; }
+.about-eyebrow::before {
+  content: 'CAPO SUD · RIVISTA DAL SUDAFRICA  —  ';
+  color: var(--ocra);
+}
+
+/* ---------- NUMERI: da Bebas a serif corsivo ---------- */
+.stat-number, .top-list-num, .pstep-num, .pcard-amount {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+}
+
+/* ---------- CHIP FILTRI: squadrate, monospace ---------- */
+.filter-chip, .fc {
+  border-radius: 0 !important;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: transparent;
+}
+.filter-chip.is-active, .fc.is-active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #F1E9D8;
+}
+.filters { background: rgba(241, 233, 216, 0.96); }
+
+/* ---------- CARD: bordo netto su carta ---------- */
+.article-card-img, .itin-img, .pcard {
+  border-radius: 0;
+}
+.side-cta { border-radius: 0; background: var(--sand); border: 1px solid var(--line); }
+
+/* ---------- COMPONENTI RIMOSSI / SOSTITUITI ---------- */
+/* Il float WhatsApp è stato eliminato dal sito: l'assistenza
+   WhatsApp è inclusa nel servizio di consulenza (vedi servizi.html) */
+.whatsapp-float { display: none !important; }
+/* Cursore custom e progress bar superati dalla rotta di viaggio */
+.cursor, .cursor-dot, .scroll-prog { display: none !important; }
+
+/* ---------- FOOTER: già scuro via --night→ink ---------- */
+.footer-brand .nav-logo { color: var(--ocra); }
